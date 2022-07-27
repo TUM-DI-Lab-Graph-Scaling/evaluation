@@ -50,7 +50,8 @@ class Runtimes:
         yticks=None,
         show=True,
         save=False,
-        save_dir="outputs/runtimes"
+        save_dir="outputs/runtimes",
+        **kwargs
     ):
         """
         Create a horizontal bar plot of the runtimes of all runs that were conducted.
@@ -65,10 +66,9 @@ class Runtimes:
         for header in ["dataloading_time", "forward_time", "backward_time", "rest"]:
             runs_df[header] = runs_df[header] / 3600
         runs_df[["dataloading_time", "forward_time", "backward_time", "rest"]].plot.barh(
-            title=r"\textbf{Runtimes comparison}",
             stacked=True,
             color=[self.colors["green"], self.colors["blue"], self.colors["orange"], self.colors["gray"]],
-            figsize=(15, 7)
+            **kwargs
         )
         if yticks:
             plt.yticks(range(len(yticks)), yticks)
@@ -78,7 +78,9 @@ class Runtimes:
             "dataloading time",
             "forward time",
             "backward time",
-            "rest"
-        ])
+            "rest"],
+            bbox_to_anchor=(1,0.65), loc="center right"
+        )
+        plt.tight_layout()
         if save:
             plt.savefig(os.path.join(save_dir, "runtimes_comparison.pdf"))

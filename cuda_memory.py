@@ -47,7 +47,8 @@ class CUDAMemory:
         mode="individual", 
         show=True,
         save=False, 
-        save_dir="outputs/cuda_memory"
+        save_dir="outputs/cuda_memory",
+        **kwargs
     ):
         """
         Plot the GPU memory allocated by or reserved for Cuda tensors over time.
@@ -71,13 +72,13 @@ class CUDAMemory:
                 group[["gpu_memory_allocated", "gpu_memory_reserved"]].plot(
                     xlabel="time", 
                     ylabel="memory in MB",
+                    ylim=(0, 48_000),
                     title=f"Rank {rank} GPU memory",
-                    color=[self.colors["blue"], self.colors["orange"]]
+                    color=[self.colors["blue"], self.colors["orange"]],
+                    legend=None,
+                    **kwargs
                 )
-                plt.legend([
-                    "allocated GPU CUDA memory",
-                    "reserved GPU CUDA memory"
-                ])
+                plt.tight_layout()
                 if save:
                     if not os.path.exists(os.path.join(save_dir, run)):
                         os.makedirs(os.path.join(save_dir, run))
@@ -89,22 +90,19 @@ class CUDAMemory:
                 cuda_df[cuda_df["rank"] == rank].reset_index(drop=True)[["gpu_memory_allocated", "gpu_memory_reserved"]]
                 for rank in cuda_df["rank"].unique()
             ])
-            cuda_df_aggr.index = pd.to_datetime(cuda_df[cuda_df["rank"] == 0].set_index("datetime").index).strftime("%H:%M")
+            index = pd.to_datetime(cuda_df[cuda_df["rank"] == 0]["datetime"])
+            cuda_df_aggr.index = (index - index.iloc[0]).apply(lambda x: self._strfdelta(x, "{hours}:{minutes}"))
             if mode == "averaged":
                 cuda_df_aggr = cuda_df_aggr / cuda_df["rank"].nunique()
-                title = "Averaged GPU memory"
-            elif mode == "sum":
-                title = "Total GPU memory"
             cuda_df_aggr.plot(
                 xlabel="time",
                 ylabel="memory in MB",
-                title=title,
-                color=[self.colors["blue"], self.colors["orange"]]
+                ylim=(0, 48_000),
+                color=[self.colors["blue"], self.colors["orange"]],
+                legend=None,
+                **kwargs
             )
-            plt.legend([
-                "allocated GPU CUDA memory",
-                "reserved GPU CUDA memory"
-            ])
+            plt.tight_layout()
             if save:
                 if not os.path.exists(os.path.join(save_dir, run)):
                     os.makedirs(os.path.join(save_dir, run))
@@ -128,7 +126,8 @@ class CUDAMemory:
         xticks=None, 
         show=True, 
         save=False, 
-        save_dir="outputs/cuda_memory"
+        save_dir="outputs/cuda_memory",
+        **kwargs
     ):
         """
         Create bar plot of the allocated and reserved cuda memory usage over
@@ -143,10 +142,9 @@ class CUDAMemory:
         runs_df = self.compare().T
         runs_df.plot.bar(
             ylabel="memory in MB",
-            title=r"\textbf{GPU CUDA memory comparison}",
             rot=0,
             color=[self.colors["blue"], self.colors["orange"]],
-            figsize=(15, 7)
+            **kwargs
         )
         if xticks:
             plt.xticks(range(len(xticks)), xticks)
@@ -154,5 +152,13 @@ class CUDAMemory:
             "allocated GPU CUDA memory",
             "reserved GPU CUDA memory"
         ])
+        plt.tight_layout()
         if save:
             plt.savefig(os.path.join(save_dir, "memory_comparison.pdf"))
+
+    def _strfdelta(self, tdelta, fmt):
+        d = {"days": tdelta.days}
+        d["hours"], rem = divmod(tdelta.seconds, 3600)
+        d["minutes"], d["seconds"] = divmod(rem, 60)
+        d["minutes"] = "{:02d}".format(d["minutes"])
+        return fmt.format(**d)
