@@ -2,6 +2,7 @@ import os
 
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 class Runtimes:
 
@@ -67,7 +68,10 @@ class Runtimes:
         save: if the created plot should be saved.
         save_dir: directory to which the figure should be saved.
         """
-        plt.rcParams['text.usetex'] = True
+        plt.rcParams.update({
+            "text.usetex": True,
+            "font.family": "serif"
+        })
         runs_df = self.compare(format=None).T
         for header in ["dataloading_time", "forward_time", "backward_time", "rest"]:
             runs_df[header] = runs_df[header] / 3600
@@ -87,6 +91,7 @@ class Runtimes:
             "rest"],
             bbox_to_anchor=(1,0.65), loc="center right"
         )
+        plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
         plt.tight_layout()
         if save:
             plt.savefig(os.path.join(save_dir, "runtimes_comparison.pdf"))

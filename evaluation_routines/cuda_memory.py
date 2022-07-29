@@ -60,7 +60,10 @@ class CUDAMemory:
         save: if the created plot(s) should be saved to a pdf file.
         save_dir: directory to which the created plots should be saved.
         """
-        plt.rcParams['text.usetex'] = True
+        plt.rcParams.update({
+            "text.usetex": True,
+            "font.family": "serif"
+        })
         torch_cuda_paths = self.data_loader.get_paths(csv_type="torch_cuda")
         cuda_df = self.data_loader.get_metrics_csv(torch_cuda_paths[run], csv_type="torch_cuda")
         if mode == "individual":
@@ -152,12 +155,16 @@ class CUDAMemory:
         save: if the created plot should be saved.
         save_dir: directory to which the figure should be saved.
         """
-        plt.rcParams['text.usetex'] = True
+        plt.rcParams.update({
+            "text.usetex": True,
+            "font.family": "serif"
+        })
         runs_df = self.compare().T
         runs_df.plot.bar(
             ylabel="memory in GB",
             rot=0,
             color=[self.colors["blue"], self.colors["orange"]],
+            ylim=(0,48),
             **kwargs
         )
         if xticks:

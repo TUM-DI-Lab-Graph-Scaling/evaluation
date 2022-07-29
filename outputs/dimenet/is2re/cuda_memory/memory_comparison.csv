@@ -1,0 +1,3 @@
+,S0,S0+fp16,S1,S1+OC,S2+OC,S2+OO+OC,S3+OC,S3+PO+OO+OC
+gpu_memory_allocated,3.46,3.47,0.76,0.76,0.76,0.46,1.44,1.0
+gpu_memory_reserved,26.92,26.25,21.08,21.08,16.07,16.2,26.68,26.82
