@@ -141,6 +141,7 @@ class CUDAMemory:
     def compare_plot(
         self,
         xticks=None, 
+        tick_colors=None,
         show=True, 
         save=False, 
         save_dir="../outputs/cuda_memory",
@@ -169,6 +170,9 @@ class CUDAMemory:
         )
         if xticks:
             plt.xticks(range(len(xticks)), xticks)
+            if tick_colors:
+                for ticklabel, tickcolor in zip(plt.gca().get_xticklabels(), tick_colors):
+                    ticklabel.set_color(tickcolor)
         plt.legend([
             "allocated GPU CUDA memory",
             "reserved GPU CUDA memory"

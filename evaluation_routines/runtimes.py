@@ -55,6 +55,7 @@ class Runtimes:
     def compare_plot(
         self, 
         yticks=None,
+        tick_colors=None,
         show=True,
         save=False,
         save_dir="../outputs/runtimes",
@@ -82,6 +83,9 @@ class Runtimes:
         )
         if yticks:
             plt.yticks(range(len(yticks)), yticks)
+            if tick_colors:
+                for ticklabel, tickcolor in zip(plt.gca().get_yticklabels(), tick_colors):
+                    ticklabel.set_color(tickcolor)
         plt.gca().invert_yaxis()
         plt.xlabel("runtime in h")
         plt.legend([
@@ -89,7 +93,7 @@ class Runtimes:
             "forward time",
             "backward time",
             "rest"],
-            bbox_to_anchor=(1,0.65), loc="center right"
+            bbox_to_anchor=(1,0.97), loc="upper right"
         )
         plt.gca().xaxis.set_major_locator(MaxNLocator(integer=True))
         plt.tight_layout()
