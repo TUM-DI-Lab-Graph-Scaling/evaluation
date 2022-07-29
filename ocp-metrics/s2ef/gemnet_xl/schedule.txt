@@ -1,0 +1,23 @@
+# Batch size 1, grad acc 2
+
+Stage 0, no mixed-precision:                [X]
+Stage 0, mixed-precision (fp16):            [X]
+Stage 1:                                    [ ] -- error, not possible
+Stage 2:                                    [X]
+Stage 2, opt offloading:                    [X]
+Stage 3:                                    [ ]
+Stage 3, opt offloading, param offloading:  [X] -- epoch runtimes are missing
+for stage 3, I aborted that one to begin with bs 2. Resources can still be visualized
+
+
+# Batch size 2
+
+Stage 0, no mixed-precision:                [X]
+Stage 0, mixed-precision (fp16):            [X]
+Stage 1, no overlapping comm:               [X]
+Stage 1, overlapping comm:                  [X]
+Stage 2, overlapping comm:                  [X]
+Stage 2, overlapping comm, opt offloading:  [X]
+Stage 3, overlapping comm:                  [X]
+Stage 3, overlapping comm, opt offloading,
+param offloading:                           [X]

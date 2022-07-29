@@ -1,0 +1,11 @@
+# Batch size 2 (200k)
+
+Stage 0, no mixed-precision:                [X]
+Stage 0, mixed-precision (fp16):            [X]
+Stage 1, no overlapping comm:               [X]
+Stage 1, overlapping comm:                  [X]
+Stage 2, overlapping comm:                  [ ]
+Stage 2, overlapping comm, opt offloading:  [ ]
+Stage 3, overlapping comm:                  [X]
+Stage 3, overlapping comm, opt offloading,
+param offloading:                           [X]
